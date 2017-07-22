@@ -1,0 +1,13 @@
+@page
+@using RazorPages
+
+<!-- the code is in the Contacts class. This class will be placed in a separate file  -->
+@model Contacts
+
+<!-- create a h2 tag with static content -->
+<h2>Contacts</h2>
+<!-- print the Message and Name properties from the Contacts class -->>
+<p>
+    @Model.Message
+    @Model.Name
+</p>
