@@ -3,16 +3,21 @@ using System.IO;
 
 namespace TypeSafeFileBuilder
 {
+    /// <summary>
+    /// This program demonstrated the use of a FileBuilder that is TypeSafe. 
+    /// See <see cref="FileBuilder"/>
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
         {
+            //create a folder
             FileBuilder.CreateFolder("test", mainFileBuilder =>
             {
                 mainFileBuilder.CreateSubFolder("1");
-                mainFileBuilder.CreateSubFolder("2", fb =>
+                mainFileBuilder.CreateSubFolder("2", fileBuilder =>
                 {
-                    fb.CreateFile("hello.txt", (sw) =>
+                    fileBuilder.CreateFile("hello.txt", (sw) =>
                     {
                         sw.WriteLine("hello");
                     });
@@ -24,7 +29,7 @@ namespace TypeSafeFileBuilder
                 mainFileBuilder.CreateSubFolder("1");
                 mainFileBuilder.CreateSubFolder("2", fb =>
                 {
-                    fb.CreateFile("hello.txt", (sw) =>
+                    fb.CreateFile("hello.txt", sw =>
                     {
                         sw.WriteLine("hello");
                     });
@@ -34,46 +39,4 @@ namespace TypeSafeFileBuilder
             });
         }
     }
-
-        public class FileBuilder
-        {
-
-            public static void CreateFolder(string path, Action<FileBuilder> action = null)
-            {
-                var fileBuilder = new FileBuilder(new DirectoryInfo(path));
-                if (action != null)
-                {
-                    action(fileBuilder);
-                }
-            }
-            private DirectoryInfo directoryInfo;
-
-            public FileBuilder(DirectoryInfo directoryInfo)
-            {
-                this.directoryInfo = directoryInfo;
-                directoryInfo.Create();
-            }
-
-            public void CreateFile(string fileName, Action<StreamWriter> action)
-            {
-                var path = Path.Combine(directoryInfo.FullName, fileName);
-                using (StreamWriter sw = File.CreateText(path))
-                {
-                    action(sw);
-                }
-            }
-
-            public void CreateSubFolder(string folderName, Action<FileBuilder> action = null)
-            {
-                var path = Path.Combine(directoryInfo.FullName, folderName);
-                var f = new FileBuilder(new DirectoryInfo(path));
-                if (action != null)
-                {
-                    action(f);
-                }
-
-            }
-        }
-
-
 }
